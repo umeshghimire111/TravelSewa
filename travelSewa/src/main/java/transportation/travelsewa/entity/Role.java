@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="role")
+
 public class Role {
 
     @Id

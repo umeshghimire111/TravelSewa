@@ -1,6 +1,7 @@
 package transportation.travelsewa.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,13 +10,15 @@ import transportation.travelsewa.entity.Location;
 import transportation.travelsewa.entity.Route;
 import transportation.travelsewa.entity.Trip;
 import transportation.travelsewa.service.TravelService;
-
 import java.util.List;
 
+
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
 @RequestMapping("/api/travel")
 @RequiredArgsConstructor
 public class TravelController {
+
 
     private final TravelService travelService;
 
