@@ -12,7 +12,6 @@ public class JwtUtils {
     private final Key key;
     private final long ACCESS_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
-
     public JwtUtils() {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
@@ -25,8 +24,6 @@ public class JwtUtils {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
-
-
 
     public boolean validateToken(String token) {
         try {
