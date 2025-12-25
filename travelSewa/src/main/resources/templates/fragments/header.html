@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header">
+    <header style="padding:15px; background:#1e3a8a; color:white;">
+        <h2>TravelSewa</h2>
+
+        <nav>
+            <a th:href="@{/auth/login}" style="color:white; margin-right:15px;">Login</a><br><br>
+            <a th:href="@{/auth/signup}" style="color:white; margin-right:15px;">Signup</a>
+        </nav>
+    </header>
+</div>
+
+</body>
+</html>
