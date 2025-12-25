@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface ForgetPasswordRepo extends JpaRepository<ForgetPasswordEntity,String> {
 
     Optional<ForgetPasswordEntity> findByEmail(String email);
-    void  deleteByEmail(String email);
+
 }

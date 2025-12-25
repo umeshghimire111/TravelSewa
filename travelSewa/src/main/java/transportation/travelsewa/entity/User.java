@@ -27,6 +27,8 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id")
+   @JoinColumn(name = "role_id")
     private Role role;
+
+    private String tests;
 }

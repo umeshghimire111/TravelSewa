@@ -3,29 +3,30 @@ package transportation.travelsewa.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import transportation.travelsewa.bookingOtp.OtpRequest;
 
 @RestController
-@RequestMapping("/api/travels")
+@RequestMapping("/booking")
 @RequiredArgsConstructor
-
 public class BookingController {
-
 
     private final BookingService bookingService;
 
-    @PostMapping("/booking")
-    public ResponseEntity<Booking>bookbus(@RequestBody BookingDto booking){
-        return ResponseEntity.ok( bookingService.createBooking(booking));
+
+    @PostMapping("/book")
+    public ResponseEntity<String> bookTicket(@RequestBody BookingDto request) {
+        String response = bookingService.bookTicket(request);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/booking")
-    public ResponseEntity<List<Booking>> getAllBookings() {
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyBooking(@RequestBody OtpRequest request) {
+        String response = bookingService.verifyOtpAndConfirm(request.getBookingId(), request.getOtp());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
-    }
-
-    @PostMapping("/booking/user/{userId}")
-    public ResponseEntity<List<Booking>>booking(@PathVariable Long userId ){
-        return ResponseEntity.ok(bookingService.getBookingsByUser(userId));
     }
 }

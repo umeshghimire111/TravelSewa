@@ -1,4 +1,4 @@
-package transportation.travelsewa;
+package transportation.travelsewa.frontendController;
 
 import lombok.Data;
 import org.springframework.stereotype.Controller;

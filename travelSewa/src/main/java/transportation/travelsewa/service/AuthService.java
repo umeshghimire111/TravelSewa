@@ -8,6 +8,7 @@ import transportation.travelsewa.config.JwtUtils;
 import transportation.travelsewa.dto.*;
 import transportation.travelsewa.entity.*;
 import transportation.travelsewa.repository.*;
+import java.util.Optional;
 
 
 @Service
@@ -15,50 +16,58 @@ import transportation.travelsewa.repository.*;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-
     public RequestResponse signup(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail().trim()))
+
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        if (!request.getEmail().matches(emailRegex)) {
+            throw new RuntimeException("Email format not match");
+        }
+
+        if (request.getPassword().length() < 6) {
+            throw new RuntimeException("Password must be at least 6 characters");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail().trim())) {
             throw new RuntimeException("Email taken");
-
-        Role role = roleRepository.findByName("USER").orElseThrow();
-
+        }
         User user = new User();
         user.setEmail(request.getEmail().trim());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setName(request.getName());
-        user.setRole(role);
         userRepository.save(user);
 
-        String accessToken = jwtUtils.generateToken(user.getEmail());
-
-        return new RequestResponse("success", accessToken);
+        return new RequestResponse("Successfully signup", null);
     }
-
 
     public RequestResponse login(LoginRequest request) {
 
-        User user = userRepository
-                .findByEmail(request.getEmail())
-                .orElseThrow(()
-                        -> new RuntimeException("User not found"));
+        String email = request.getEmail().trim().toLowerCase();
 
-        if (!passwordEncoder.matches(request
-                .getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return new RequestResponse("User not found", null);
         }
 
-        String accessToken = jwtUtils
-                .generateToken(user.getEmail());
+        User user = optionalUser.get();
 
-        return new RequestResponse("success :", accessToken);
+
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return new RequestResponse("Invalid password", null);
+        }
+
+        String token = jwtUtils.generateToken(user.getEmail());
+
+        return new RequestResponse("Login successful", token);
     }
 
     public RequestResponse logout() {
-        return new RequestResponse("Logged out", null);
+        return new RequestResponse("Logged out successfully", null);
     }
+
 }
 
 

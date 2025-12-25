@@ -1,5 +1,6 @@
 package transportation.travelsewa.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class RequestResponse {
+
     private String message;
     private String accessToken;
 

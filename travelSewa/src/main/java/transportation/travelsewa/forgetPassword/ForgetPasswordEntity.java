@@ -17,5 +17,5 @@ public class ForgetPasswordEntity {
     private String email;
     private String otp;
     private LocalDateTime expiryTime;
-    private String fullName;
+
 }

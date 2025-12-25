@@ -1,7 +1,10 @@
 package transportation.travelsewa.forgetPassword;
 
 
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import transportation.travelsewa.entity.User;
@@ -11,51 +14,71 @@ import java.util.Random;
 
 @Service("forgetAuthService")
 @RequiredArgsConstructor
+
+
 public class EmailService {
 
     private final ForgetPasswordRepo forgetPasswordRepo;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
 
+
+    private void sendEmail(String email, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Forget Password OTP");
+        message.setText("Your OTP is: " + otp + "\nValid for 5 minutes.");
+        message.setFrom("travelsewa.noreply@gmail.com");
+
+        mailSender.send(message);
+    }
     public String sendOtp(String email) {
-        userRepository.findByEmail(email).orElseThrow(()
+        userRepository.findByEmail(email)
+                .orElseThrow(()
                 -> new RuntimeException("User not found"));
 
 
-        String otp = String.format("%06d", new Random().nextInt(1_000_000));
+        String otp = String.format("%06d", new Random().nextInt(60000));
 
-        forgetPasswordRepo.deleteByEmail(email);
 
-        ForgetPasswordEntity otpEntity = new ForgetPasswordEntity();
-        otpEntity.setEmail(email);
-        otpEntity.setOtp(otp);
-        otpEntity.setFullName("");
-        otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+        ForgetPasswordEntity otpEntity = forgetPasswordRepo.findByEmail(email)
+                .map(existing -> {
+                    existing.setOtp(otp);
+                    existing.setExpiryTime(LocalDateTime.now().plusMinutes(1));
+
+                    return existing;
+                })
+                .orElseGet(() -> {
+                    ForgetPasswordEntity newEntity = new ForgetPasswordEntity();
+                    newEntity.setEmail(email);
+                    newEntity.setOtp(otp);
+                    newEntity.setExpiryTime(LocalDateTime.now().plusMinutes(1));
+                    return newEntity;
+                });
+
         forgetPasswordRepo.save(otpEntity);
+        sendEmail(email, otp);
 
-        return "If this email exists, an OTP has been sent. Please check your inbox.";
+        return "Your OTP is: " + otp + "\nValid for 1 minutes";
+
     }
 
+
     public String resetPassword(String email, String otp, String newPassword) {
-        ForgetPasswordEntity otpEntity = forgetPasswordRepo.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid OTP or email."));
+        ForgetPasswordEntity entity =forgetPasswordRepo.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Email not found"));
 
-        if (!otpEntity.getOtp().equals(otp)) {
-            throw new IllegalArgumentException("Invalid OTP...Please check and try again.");
-        }
 
-        if (otpEntity.getExpiryTime().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("OTP expired....Request a new one.");
-        }
+
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("User not found."));
+                .orElseThrow(() -> new IllegalArgumentException("sorry\nUser not found"));
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        forgetPasswordRepo.deleteByEmail(email);
-
-        return "Your password has been successfully updated! You can now log in.";
+        return "Password reset ";
     }
+
 }

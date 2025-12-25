@@ -33,3 +33,4 @@ build/
 .vscode/
 .idea/
 *.iml
+/src/main/java/transportation/travelsewa/admin/AdminInitializer.java

@@ -1,6 +1,5 @@
 package transportation.travelsewa.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import transportation.travelsewa.entity.Bus;

@@ -1,4 +1,7 @@
 package transportation.travelsewa.booking;
 
-public class BookingStatus {
+public enum BookingStatus {
+    PENDING,
+    CONFIRMED,
+    CANCELLED
 }
