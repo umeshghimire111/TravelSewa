@@ -14,10 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import transportation.travelsewa.entity.Role;
-import transportation.travelsewa.entity.User;
 import transportation.travelsewa.repository.RoleRepository;
 import transportation.travelsewa.repository.UserRepository;
-
 import java.io.IOException;
 import java.util.Collections;
 

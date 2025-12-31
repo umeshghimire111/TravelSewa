@@ -23,12 +23,12 @@ public class SwaggerConfig {
                        .description("API documentation for TravelSewa project")
                 ).servers(Arrays.asList(
                         new Server().url("http://localhost:8085").description("local server"),
-                        new Server().url("http://localhost:8086").description("live server")))
+                        new Server().url("http://livehost:5500").description("live server")))
 
                 .tags(Arrays.asList(
-                        new Tag().name("public APIs"),
-                        new Tag().name("User APIs"),
-                        new Tag().name("Admin APIs")
+//                        new Tag().name("public APIs"),
+//                        new Tag().name("User APIs"),
+//                        new Tag().name("Admin APIs")
                 ))                .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
                 .components(new Components()
                         .addSecuritySchemes("BearerAuth",

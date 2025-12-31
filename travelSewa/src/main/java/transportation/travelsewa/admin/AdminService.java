@@ -25,7 +25,7 @@ public class AdminService {
 
 
     public List<Location> getAllLocations() {
-        return locationRepository.findAll(); }
+        return locationRepository.findAll();}
 
     public List<Route> getAllRoutes() {
         return routeRepository.findAll(); }

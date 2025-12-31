@@ -24,37 +24,30 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-
-
-            .cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/faq", "/details", "/auth/**", "/css/**", "/images/**", "/qr/**", "/public"
+                        ).permitAll()
 
-                        .requestMatchers("/", "/faq", "/details", "/auth/**", "/css/**", "/images/**").permitAll()
+                        .requestMatchers("/public").permitAll()
+
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**", "/api/forget/**", "/api/travel/**").permitAll()
-
-
                         .requestMatchers("/booking/**").hasRole("USER")
-
-
-                        .requestMatchers("/booking/confirm/**", "/booking/cancel/**").hasAnyAuthority("USER", "ROLE_USER")
-
-
+                        .requestMatchers("/booking/confirm/**", "/booking/cancel/**")
+                        .hasAnyAuthority("USER", "ROLE_USER")
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/select/**")
+                        .hasAnyAuthority("USER", "ROLE_USER", "ADMIN")
 
-
-                        .requestMatchers("/api/select/**").hasAnyAuthority("USER", "ROLE_USER", "ADMIN")
 
                         .anyRequest().authenticated()
                 )
-
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                         .accessDeniedHandler((req, res, ex) -> res.sendError(HttpServletResponse.SC_FORBIDDEN))
                 )
-
-
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

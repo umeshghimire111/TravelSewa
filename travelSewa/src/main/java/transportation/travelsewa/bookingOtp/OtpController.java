@@ -18,5 +18,4 @@ public class OtpController {
         return ResponseEntity.ok(response);
     }
 
-
 }
