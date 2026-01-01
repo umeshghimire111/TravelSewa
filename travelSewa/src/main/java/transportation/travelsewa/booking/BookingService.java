@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import transportation.travelsewa.bookingOtp.OtpService;
+import transportation.travelsewa.repository.BusRepository;
 import transportation.travelsewa.repository.UserRepository;
 
 import java.util.List;
@@ -15,22 +16,24 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
+    private final BusRepository busRepository;
     private final OtpService otpService;
-
 
     public String bookTicket(BookingDto request) {
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : principal.toString();
 
-
         Long userId = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"))
                 .getId();
 
+        var bus = busRepository.findByName(request.getBusName())
+                .orElseThrow(() -> new RuntimeException("Bus not found with name: " + request.getBusName()));
 
+        Long busId = bus.getId();
         BookingEntity booking = new BookingEntity();
-        booking.setBusId(request.getBusId());
+        booking.setBusId(busId);
         booking.setUserId(userId);
         booking.setSeats(request.getSeats());
         booking.setTravelDate(request.getTravelDate());
@@ -41,9 +44,8 @@ public class BookingService {
 
         otpService.sendOtp(booking.getBookingId(), email);
 
-        return "Booking created successfully. BookingId: " + booking.getBookingId() + ". OTP sent to email.";
+        return "Booking created successfully. BookingId: " + booking.getBookingId() + " OTP sent to email";
     }
-
 
     public String verifyOtpAndConfirm(Long bookingId, String otp) {
         String otpResult = otpService.verifyOtp(bookingId, otp);
@@ -51,7 +53,6 @@ public class BookingService {
         if (!otpResult.equals("OTP verified successfully")) {
             return otpResult;
         }
-
 
         return bookingRepository.findById(bookingId)
                 .map(booking -> {
