@@ -15,8 +15,7 @@ public class BookingController {
 
     @PostMapping("/book")
     public ResponseEntity<String> bookTicket(@RequestBody BookingDto request) {
-        String response = bookingService.bookTicket(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(bookingService.bookTicket(request));
     }
 
     @PostMapping("/verify")
