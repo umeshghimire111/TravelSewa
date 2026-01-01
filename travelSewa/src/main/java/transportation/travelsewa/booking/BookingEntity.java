@@ -28,7 +28,7 @@ public class BookingEntity {
     private Integer seats;
 
     @NotNull(message = "Travel date is required")
-    @FutureOrPresent(message = "Travel date must be today or in the future")
+    @FutureOrPresent(message = "Travel date must be today or next day")
     private LocalDate travelDate;
 
     @Enumerated(EnumType.STRING)
